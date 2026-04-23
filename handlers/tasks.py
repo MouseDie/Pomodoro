@@ -5,7 +5,7 @@ from pydantic import BaseModel
 from dependency import get_task_service, get_tasks_repository
 from fixtures import tasks as fixtures_tasks
 from schema.task import TaskSchema
-from database.database import get_db_session
+from database import get_db_session
 from repository import TaskRepository, TaskCache
 from service.task import TaskService
 
@@ -24,6 +24,17 @@ async def get_tasks(
 ):
     return task_service.get_tasks()
 
+
+# Если разложить это по шагам, то происходит следующее:
+# Запрос прилетает в FastAPI: Кто-то вызвал POST-запрос на ваш эндпоинт.
+# FastAPI видит зависимость: Он замечает Depends(get_tasks_repository) и ставит выполнение функции create_task на паузу.
+# Вызов функции-провайдера: FastAPI запускает get_tasks_repository().
+# Получение объекта: Эта функция создает и возвращает объект (экземпляр класса) TaskRepository.
+# Инъекция (внедрение): FastAPI берет этот созданный объект и сам подставляет его в вашу переменную task_repository внутри функции create_task.
+# Выполнение функции: Теперь, когда у create_task есть всё необходимое (и данные из JSON, и готовый репозиторий), она начинает работать.
+# Важный нюанс:
+# TaskRepository — это не просто «формат данных» (как JSON), а живой объект класса, у которого есть методы. Именно поэтому вы можете сразу вызвать у него функцию:
+# task_repository.create_task(task).
 
 @router.post(
     "/",

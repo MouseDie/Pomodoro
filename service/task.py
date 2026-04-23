@@ -12,9 +12,9 @@ class TaskService:
     task_repository: TaskRepository
     task_cache: TaskCache
         
-    def get_tasks(self):
-        if tasks := self.task_cache.get_tasks():
-            return tasks
+    def get_tasks(self) -> list[TaskSchema]:
+        if cache_task := self.task_cache.get_tasks():
+            return cache_task
         else:    
             tasks = self.task_repository.get_tasks()
             tasks_schema = [TaskSchema.model_validate(task) for task in tasks]
