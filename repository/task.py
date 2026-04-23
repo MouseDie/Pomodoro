@@ -1,7 +1,8 @@
 from sqlalchemy import select, delete, update
 from sqlalchemy.orm import Session
 
-from database import Tasks, Categories, get_db_session
+from models import Tasks, Categories
+from database import get_db_session
 from schema.task import TaskSchema
 
 class TaskRepository:
