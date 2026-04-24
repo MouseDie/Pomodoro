@@ -9,3 +9,4 @@ class UserProfile(Base):
     id: Mapped[int] = mapped_column(primary_key=True, nullable=False)
     username: Mapped[str] = mapped_column(nullable=False)
     password: Mapped[str] = mapped_column(nullable=False)
+    test: Mapped[str] = mapped_column(nullable=True)
