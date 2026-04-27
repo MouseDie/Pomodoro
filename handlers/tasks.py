@@ -1,10 +1,11 @@
 ﻿from typing import Annotated
-from fastapi import FastAPI, APIRouter, status, Depends
+from fastapi import FastAPI, APIRouter, HTTPException, status, Depends
 from pydantic import BaseModel
 #from dependency import get_tasks_repository, get_tasks_cache_repository
 from dependency import get_task_service, get_tasks_repository, get_request_user_id
+from exception import TaskNotFound
 from fixtures import tasks as fixtures_tasks
-from schema.task import TaskSchema
+from schema import TaskCreateSchema, TaskSchema
 from database import get_db_session
 from repository import TaskRepository, TaskCache
 from service.task import TaskService
@@ -41,12 +42,16 @@ async def get_tasks(
     response_model=TaskSchema,
 )
 async def create_task(
-    task: TaskSchema,
-    task_repository: Annotated[TaskRepository, Depends(get_tasks_repository)],
+    body: TaskCreateSchema,
+    task_service: Annotated[TaskService, Depends(get_task_service)],
     user_id: int = Depends(get_request_user_id)
+    
+    # task_repository: Annotated[TaskRepository, Depends(get_tasks_repository)],
+    # user_id: int = Depends(get_request_user_id)
 ):
-    task_id = task_repository.create_task(task)
-    task.id = task_id
+    # task_id = task_repository.create_task(task)
+    # task.id = task_id
+    task = task_service.create_task(body, user_id)
     return task
 
 
@@ -57,9 +62,17 @@ async def create_task(
 async def patch_task(
     task_id: int,
     name: str,
-    task_repository: Annotated[TaskRepository, Depends(get_tasks_repository)]
+   # task_repository: Annotated[TaskRepository, Depends(get_tasks_repository)]
+    task_service: Annotated[TaskService, Depends(get_task_service)],
+    user_id: int = Depends(get_request_user_id)
 ):
-    return task_repository.update_task_name(task_id, name)
+    try:
+        return task_service.update_task_name(task_id=task_id, name=name, user_id=user_id)
+    except TaskNotFound as e:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=e.detail
+        )
     # for task in fixtures_tasks:
     #     if task["id"] == task_id:
     #         task["name"] = name
@@ -72,10 +85,18 @@ async def patch_task(
 )
 async def delete_task(
     task_id: int,
-    task_repository: Annotated[TaskRepository, Depends(get_tasks_repository)]
+    #task_repository: Annotated[TaskRepository, Depends(get_tasks_repository)]
+    task_service: Annotated[TaskService, Depends(get_task_service)],
+    user_id: int = Depends(get_request_user_id)
 ):
-    task_repository.delete_task(task_id)
-    return {"message": "task deleted succesfully"}
+    try:
+        task_service.delete_task(task_id=task_id, user_id=user_id)
+    except TaskNotFound as e:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=e.detail
+        )
+    #return {"message": "task deleted succesfully"}
     # for index, task in enumerate(fixtures_tasks):
     #     if task["id"] == task_id:
     #         del fixtures_tasks[index]
