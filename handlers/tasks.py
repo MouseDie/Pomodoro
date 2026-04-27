@@ -2,7 +2,7 @@
 from fastapi import FastAPI, APIRouter, status, Depends
 from pydantic import BaseModel
 #from dependency import get_tasks_repository, get_tasks_cache_repository
-from dependency import get_task_service, get_tasks_repository
+from dependency import get_task_service, get_tasks_repository, get_request_user_id
 from fixtures import tasks as fixtures_tasks
 from schema.task import TaskSchema
 from database import get_db_session
@@ -42,7 +42,8 @@ async def get_tasks(
 )
 async def create_task(
     task: TaskSchema,
-    task_repository: Annotated[TaskRepository, Depends(get_tasks_repository)]
+    task_repository: Annotated[TaskRepository, Depends(get_tasks_repository)],
+    user_id: int = Depends(get_request_user_id)
 ):
     task_id = task_repository.create_task(task)
     task.id = task_id

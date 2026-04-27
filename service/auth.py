@@ -7,11 +7,13 @@ from exception import UserNotFoundException, UserNotCorrectPasswordException
 from models.user import UserProfile
 from repository.user import UserRepository
 from schema.user import UserLoginSchema
+from settings import Settings
 
 
 @dataclass
 class AuthService:
     user_repository: UserRepository
+    settings: Settings
     
     def login(self, username: str, password: str) -> UserLoginSchema:
         user = self.user_repository.get_user_by_username(username)
@@ -27,9 +29,13 @@ class AuthService:
         if user.password != password:
             raise UserNotCorrectPasswordException
         
-    @staticmethod    
-    def generate_access_token(user_id: int) -> str:
+   
+    def generate_access_token(self, user_id: int) -> str:
         expires_date_unix = (dt.datetime.utcnow() + timedelta(days=7)).timestamp()
        # return ''.join(choice(string.ascii_uppercase + string.digits) for _ in range(10))
-        token = jwt.encode({'user_id': user_id, 'expire':expires_date_unix}, key='secret', algorithm='HS256')
+        token = jwt.encode(
+            {'user_id': user_id, 'expire':expires_date_unix}, 
+            key=self.settings.JWT_SECRET_KEY, 
+            algorithm=self.settings.JWT_ENCODE_ALGORITHM
+        )
         return token
