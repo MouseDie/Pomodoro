@@ -23,7 +23,8 @@ async def get_tasks(
     # task_cache: Annotated[TaskCache, Depends(get_tasks_cache_repository)],
     task_service: Annotated[TaskService, Depends(get_task_service)]
 ):
-    return task_service.get_tasks()
+    tasks = await task_service.get_tasks()
+    return tasks
 
 
 # Если разложить это по шагам, то происходит следующее:
@@ -51,7 +52,7 @@ async def create_task(
 ):
     # task_id = task_repository.create_task(task)
     # task.id = task_id
-    task = task_service.create_task(body, user_id)
+    task = await task_service.create_task(body, user_id)
     return task
 
 
@@ -67,7 +68,7 @@ async def patch_task(
     user_id: int = Depends(get_request_user_id)
 ):
     try:
-        return task_service.update_task_name(task_id=task_id, name=name, user_id=user_id)
+        return await task_service.update_task_name(task_id=task_id, name=name, user_id=user_id)
     except TaskNotFound as e:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -90,7 +91,7 @@ async def delete_task(
     user_id: int = Depends(get_request_user_id)
 ):
     try:
-        task_service.delete_task(task_id=task_id, user_id=user_id)
+        await task_service.delete_task(task_id=task_id, user_id=user_id)
     except TaskNotFound as e:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
