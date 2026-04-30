@@ -1,7 +1,7 @@
 from dataclasses import dataclass, field
 #import requests
 import httpx
-from app.schema import GoogleUserData
+from app.users.auth.schema import GoogleUserData
 from app.settings import Settings
 
 
