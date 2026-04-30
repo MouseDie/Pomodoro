@@ -3,8 +3,8 @@ from typing import Annotated
 from fastapi import APIRouter, Depends
 
 from app.dependency import get_user_service
-from app.schema import UserLoginSchema, UserCreateSchema
-from app.service.user import UserService
+from app.users.user_profile.schema import UserLoginSchema, UserCreateSchema
+from app.users.user_profile.service import UserService
 
 router = APIRouter(prefix="/user", tags=["user"])
 
@@ -14,4 +14,4 @@ async def create_user(
     body: UserCreateSchema, 
     user_service: Annotated[UserService, Depends(get_user_service)]
 ):
-    return user_service.create_user(username=body.username, password=body.password)
+    return await user_service.create_user(username=body.username, password=body.password)

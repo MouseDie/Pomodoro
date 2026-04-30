@@ -3,13 +3,15 @@ import httpx
 from sqlalchemy.orm import Session
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.client import GoogleClient, YandexClient
+from app.users.auth.client import GoogleClient, YandexClient
 from app.infra.database import get_db_session
 from app.infra.cache import get_redis_connection
 from app.exception import TokenExpired, TokenNotCorrect
-from app.repository import TaskRepository, TaskCache
-from app.service import TaskService, UserService, AuthService
-from app.repository import UserRepository
+from app.tasks.repository import TaskCache, TaskRepository
+from app.tasks.service import TaskService
+from app.users.auth.service import AuthService
+from app.users.user_profile.service import UserService
+from app.users.user_profile.repository import UserRepository
 from app.settings import Settings
 
 

@@ -3,8 +3,8 @@ from sqlalchemy.orm import Session
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from dataclasses import dataclass
-from app.models import UserProfile
-from app.schema import UserCreateSchema
+from app.users.user_profile.models import UserProfile
+from app.users.user_profile.schema import UserCreateSchema
 
 @dataclass 
 class UserRepository:

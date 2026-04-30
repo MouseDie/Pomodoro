@@ -5,10 +5,10 @@ from pydantic import BaseModel
 from app.dependency import get_task_service, get_tasks_repository, get_request_user_id
 from app.exception import TaskNotFound
 from fixtures import tasks as fixtures_tasks
-from app.schema import TaskCreateSchema, TaskSchema
+from app.tasks.schema import TaskCreateSchema, TaskSchema
 from app.infra.database import get_db_session
-from app.repository import TaskRepository, TaskCache
-from app.service.task import TaskService
+from app.tasks.repository import TaskRepository, TaskCache
+from app.tasks.service import TaskService
 
 router = APIRouter(prefix="/task", tags=["task"])
 
