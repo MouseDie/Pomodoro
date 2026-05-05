@@ -11,6 +11,8 @@ import factory.fuzzy
 from pytest_factoryboy import register
 from faker import Factory as FakerFactory
 
+from tests.fixtures.users.user_model import EXIST_GOOGLE_USER_ID, EXISTS_GOOGLE_USER_EMAIL
+
 
 faker = FakerFactory.create()
 
@@ -59,8 +61,8 @@ def yandex_client():
 #@pytest.fixture
 def google_user_info_data() -> GoogleUserData:
     return GoogleUserData(
-        id=faker.random_int(),
-        email=faker.email(),
+        id=EXIST_GOOGLE_USER_ID,
+        email=EXISTS_GOOGLE_USER_EMAIL,
         name=faker.name(),
         verified_email=True,
         access_token=faker.sha256()

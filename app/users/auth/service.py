@@ -4,7 +4,7 @@ from datetime import timedelta
 import datetime
 from jose import JWTError, jwt
 
-from app.users.auth.client import GoogleClient, YandexClient
+from app.users.auth.client import GoogleClient, YandexClient, MailClient
 from app.exception import TokenExpired, TokenNotCorrect, UserNotFoundException, UserNotCorrectPasswordException
 from app.users.user_profile.models import UserProfile
 from app.users.user_profile.repository.user import UserRepository
@@ -18,6 +18,7 @@ class AuthService:
     settings: Settings
     google_client: GoogleClient
     yandex_client: YandexClient
+   # mail_client: MailClient
     
     
     async def google_auth(self, code: str):
@@ -34,6 +35,7 @@ class AuthService:
         )
         created_user = await self.user_repository.create_user(create_user_data)
         access_token = self.generate_access_token(user_id=created_user.id)
+       # self.mail_client.send_welcome_email(to=user_data.email)
         #print('user_create')
         return UserLoginSchema(user_id=created_user.id, access_token=access_token)
         #print(user_data)
@@ -53,6 +55,7 @@ class AuthService:
         )
         created_user = await self.user_repository.create_user(create_user_data)
         access_token = self.generate_access_token(user_id=created_user.id)
+      #  self.mail_client.send_welcome_email(to=user_data.email)
         #print('user_create')
         return UserLoginSchema(user_id=created_user.id, access_token=access_token)
         

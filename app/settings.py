@@ -24,6 +24,11 @@ class Settings(BaseSettings):
     YANDEX_SECRET_KEY: str = os.getenv('YANDEX_SECRET_KEY')
     YANDEX_REDIRECT_URI: str = 'http://localhost:8000/auth/yandex'
     YANDEX_TOKEN_URL: str = "https://oauth.yandex.ru/token"
+    CELERY_REDIS_URL: str = 'redis://localhost:6379'
+    from_email: str = "no-reply@m-test.live"
+    SMTP_PORT: int = 465
+    SMTP_HOST : str = "smtp.yandex.ru"
+    SMTP_PASSWORD: str = ""
     
     
     

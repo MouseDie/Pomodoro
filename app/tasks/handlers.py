@@ -1,5 +1,7 @@
-﻿from typing import Annotated
-from fastapi import FastAPI, APIRouter, HTTPException, status, Depends
+﻿import asyncio
+import time
+from typing import Annotated
+from fastapi import FastAPI, APIRouter, HTTPException, status, Depends, BackgroundTasks
 from pydantic import BaseModel
 #from dependency import get_tasks_repository, get_tasks_cache_repository
 from app.dependency import get_task_service, get_tasks_repository, get_request_user_id
@@ -13,6 +15,11 @@ from app.tasks.service import TaskService
 router = APIRouter(prefix="/task", tags=["task"])
 
 
+async def get_tasks_log(tasks_count: int):
+    #time.sleep(3.0)
+    await asyncio.sleep(3.0)
+    print(f"get {tasks_count} tasks")
+    
 
 @router.get(
     "/all",
@@ -21,9 +28,11 @@ router = APIRouter(prefix="/task", tags=["task"])
 async def get_tasks(
     # task_repository: Annotated[TaskRepository, Depends(get_tasks_repository)],
     # task_cache: Annotated[TaskCache, Depends(get_tasks_cache_repository)],
-    task_service: Annotated[TaskService, Depends(get_task_service)]
+    task_service: Annotated[TaskService, Depends(get_task_service)],
+    background_tasks: BackgroundTasks
 ):
     tasks = await task_service.get_tasks()
+    background_tasks.add_task(get_tasks_log, tasks_count=len(tasks))
     return tasks
 
 

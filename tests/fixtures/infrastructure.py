@@ -50,7 +50,7 @@ async def init_models(event_loop):
 # )
 
 
-@pytest_asyncio.fixture
+@pytest_asyncio.fixture()
 async def db_session():
     # Создаем новый engine для каждой сессии или используем один на session
     engine = create_async_engine(

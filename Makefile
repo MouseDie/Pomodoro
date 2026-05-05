@@ -19,3 +19,6 @@ migrate-create:
 
 migrate-apply:
 	alembic upgrade head
+
+celery run:
+	celery -A worker.celery worker --loglevel=info
