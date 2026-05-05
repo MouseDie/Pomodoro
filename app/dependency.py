@@ -91,4 +91,4 @@ async def get_request_user_id(
             status_code=401,
             detail=e.detail
         )
-    return user_id['user_id']
+    return user_id
