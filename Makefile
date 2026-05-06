@@ -20,5 +20,9 @@ migrate-create:
 migrate-apply:
 	alembic upgrade head
 
-celery run:
-	celery -A worker.celery worker --loglevel=info
+celery-run:
+	celery -A worker.celery worker --loglevel=info -P solo -E
+
+flower-run:
+# 	celery --broker=redis://localhost:6379/0 flower --port=5555
+	celery -A worker.celery --broker=redis://localhost:6379/0 flower --port=5555
